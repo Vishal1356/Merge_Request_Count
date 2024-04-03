@@ -53,7 +53,7 @@ def fetch_merge_request_changes(merge_request_iid, private_token):
 # Main function to retrieve and save data
 def main():
     private_token = "fzsqL4ppitPYBEUcF6sH"  # Replace with your Private-Token
-    months = pd.date_range(start="2023-01-01", end="2023-12-31", freq="MS")  # Generate a range of months for the year 2023
+    months = pd.date_range(start="2024-01-01", end="2024-03-31", freq="MS")  # Generate a range of months for the year 2023
 
     for target_month in months:
         # Get user IDs and usernames for all users with pagination
@@ -82,14 +82,16 @@ def main():
                         total_lines_added += all_changes.count("\n+")
                         total_lines_removed += all_changes.count("\n-")
 
-                # Append user's data to df_merge_requests
-                df_merge_requests = df_merge_requests.append({
-                    "Project Name": "am-ui-automation",
-                    "Name": username,
+                    # Append user's data to df_merge_requests
+                user_df = pd.DataFrame({
+                    "Project Name":"am-ui-automation",
+                    "Name": [username],
                     "MergeRequestCount": len(merge_requests_data),
                     "LinesAdded": total_lines_added,
                     "LinesRemoved": total_lines_removed,
-                }, ignore_index=True)
+                    "Created_at": None  # You can update this if needed
+                })
+                df_merge_requests = pd.concat([df_merge_requests, user_df], ignore_index=True)
 
         # Save data to Excel for the current month
         file_name = f"gitlab_merge_requests_{target_month.strftime('%B_%Y')}.xlsx"
